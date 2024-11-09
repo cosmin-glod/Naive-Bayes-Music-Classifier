@@ -110,60 +110,6 @@ def decompose_harmonic_percussive(data):
 
     return h_mean, h_var, p_mean, p_var
 
-def mel_frequency_cepstral_coef(data):
-    mfcc_data = librosa.feature.mfcc(y = data)
-
-    mfcc_means = np.mean(mfcc_data, axis=1)
-    mfcc_var = np.var(mfcc_data, axis=1)
-
-    return mfcc_means, mfcc_var
-
-def compute_features():
-
-    songs = getSongs()
-
-    all_features = []
-
-    for song in songs[0:]:
-        song_features = np.empty(61)
-        data = librosa.load(song)
-
-        # Extract and assign various audio features to song_features
-
-        # Chroma features
-        song_features[0], song_features[1] = chroma(data)
-
-        # Root Mean Square Energy
-        song_features[2], song_features[3] = rootMeanSquareEnergy(data)
-
-        # Spectral Centroid and Bandwidth
-        song_features[4:8] = spectralCentroidAndBandwidth(data)
-
-        # Spectral Rolloff
-        song_features[8], song_features[9] = rolloff(data)
-
-        # Zero Crossing Rate
-        song_features[10], song_features[11] = zero_crossing_rate(data)
-
-        # Harmonic and Percussive Components
-        song_features[12:16] = decompose_harmonic_percussive(data)
-
-        # Tempo
-        song_features[16] = tempo(data)
-
-        # Band Energy Ratio
-        song_features[17], song_features[18] = band_energy_ratio(data)
-
-        # Amplitude Envelope
-        song_features[19], song_features[20] = amplitude_envelope(data)
-
-        # Mel-Frequency Cepstral Coefficients (MFCC) - Alternating between mean and variance
-        mfcc_means, mfcc_vars = mel_frequency_cepstral_coef(data)
-        song_features[21:61:2] = mfcc_means
-        song_features[22:62:2] = mfcc_vars
-
-        all_features.append(song_features)
-
 def tempo(song, data, sr):
     '''
     computes temp at beat per minute (bpm)
@@ -226,3 +172,57 @@ def amplitude_envelope(data):
         var = np.var(amp_envs)
 
         return mean, var
+
+def mel_frequency_cepstral_coef(data):
+    mfcc_data = librosa.feature.mfcc(y = data)
+
+    mfcc_means = np.mean(mfcc_data, axis=1)
+    mfcc_var = np.var(mfcc_data, axis=1)
+
+    return mfcc_means, mfcc_var
+
+def compute_features():
+
+    songs = getSongs()
+
+    all_features = []
+
+    for song in songs[0:]:
+        song_features = np.empty(61)
+        data = librosa.load(song)
+
+        # Extract and assign various audio features to song_features
+
+        # Chroma features
+        song_features[0], song_features[1] = chroma(data)
+
+        # Root Mean Square Energy
+        song_features[2], song_features[3] = rootMeanSquareEnergy(data)
+
+        # Spectral Centroid and Bandwidth
+        song_features[4:8] = spectralCentroidAndBandwidth(data)
+
+        # Spectral Rolloff
+        song_features[8], song_features[9] = rolloff(data)
+
+        # Zero Crossing Rate
+        song_features[10], song_features[11] = zero_crossing_rate(data)
+
+        # Harmonic and Percussive Components
+        song_features[12:16] = decompose_harmonic_percussive(data)
+
+        # Tempo
+        song_features[16] = tempo(data)
+
+        # Band Energy Ratio
+        song_features[17], song_features[18] = band_energy_ratio(data)
+
+        # Amplitude Envelope
+        song_features[19], song_features[20] = amplitude_envelope(data)
+
+        # Mel-Frequency Cepstral Coefficients (MFCC) - Alternating between mean and variance
+        mfcc_means, mfcc_vars = mel_frequency_cepstral_coef(data)
+        song_features[21:61:2] = mfcc_means
+        song_features[22:62:2] = mfcc_vars
+
+        all_features.append(song_features)
