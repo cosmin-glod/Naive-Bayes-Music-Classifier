@@ -110,6 +110,61 @@ def decompose_harmonic_percussive(data):
 
     return h_mean, h_var, p_mean, p_var
 
+def tempo(data):
+    """
+    Computes tempo at beat per minute (bpm)
+    """
+
+    bpm = librosa.feature.tempo(y = data)
+    return bpm[0]
+
+def band_energy_ratio(data, sr):
+    """
+    How loudly a low frequency band is compared to the high frequency
+    """
+
+    stft = librosa.stft(y = data)
+    max_freq = sr / 2
+    num_bins = stft.shape[0]
+    freq_bin_distance = max_freq / num_bins
+    split_freq_bin = int(np.floor(2000 / freq_bin_distance))
+
+    stft = np.abs(stft, dtype=np.float64)
+    power_spectrogram = (stft ** 2).T
+
+    bers = []
+    for freq in power_spectrogram:
+        low_band_sum = np.sum(freq[:split_freq_bin])
+        high_band_sum = np.sum(freq[split_freq_bin:])
+
+        if high_band_sum == 0:
+            high_band_sum = 1e-12
+
+        ber = low_band_sum / high_band_sum
+        bers.append(ber)
+
+    bers = np.array(bers)
+    mean = np.mean(bers)
+    var = np.var(bers)
+
+    return mean, var
+
+def amplitude_envelope(data):
+    """
+    Maximum amplitude in a frame
+    """
+
+    amp_envs = []
+    for i in range(0, len(data), 512):
+        frame = data[i:i + 2048]
+        amp_envs.append(max(frame))
+
+    amp_envs = np.array(amp_envs)
+    mean = np.mean(amp_envs)
+    var = np.var(amp_envs)
+
+    return mean, var
+
 def mel_frequency_cepstral_coef(data):
     mfcc_data = librosa.feature.mfcc(y = data)
 
@@ -126,7 +181,7 @@ def compute_features():
 
     for song in songs[0:]:
         song_features = np.empty(61)
-        data = librosa.load(song)
+        data, sr = librosa.load(song)
 
         # Extract and assign various audio features to song_features
 
@@ -152,7 +207,7 @@ def compute_features():
         song_features[16] = tempo(data)
 
         # Band Energy Ratio
-        song_features[17], song_features[18] = band_energy_ratio(data)
+        song_features[17], song_features[18] = band_energy_ratio(data, sr)
 
         # Amplitude Envelope
         song_features[19], song_features[20] = amplitude_envelope(data)
@@ -164,65 +219,6 @@ def compute_features():
 
         all_features.append(song_features)
 
-def tempo(song, data, sr):
-    '''
-    computes temp at beat per minute (bpm)
-    :return bpm
-    '''
+    np.save("features.npy", np.array(all_features))
 
-    bpm = librosa.feature.tempo(y = data, sr=sr, hop_length = 512)
-    return bpm[0]
-
-def band_energy_ratio(data, sr):
-    '''
-    computes band energy ratio for different framses
-    :return: mean, var
-    '''
-
-    # compute - short fourier transform
-
-    #spectogram
-    stft = librosa.stft(y = data, n_fft = 2048, hop_length = 512)
-    max_freq = sr / 2
-    num_bins = stft.shape[0]
-    freq_bin_distance = max_freq / num_bins
-    # split frequency is 2000
-    split_freq_bin = int(np.floor(2000 / freq_bin_distance))  # round down
-    stft = np.abs(stft, dtype=np.float64)
-    power_spectrogram = (stft ** 2).T  # (time, pwr)
-
-    bers = []
-    # ber for each frame
-    for freq in power_spectrogram:
-        low_band_sum = np.sum(freq[:split_freq_bin])
-        high_band_sum = np.sum(freq[split_freq_bin:])
-
-        if high_band_sum == 0:
-            high_band_sum = 1e-12
-
-        ber = low_band_sum / high_band_sum
-        bers.append(ber)
-
-    bers = np.array(bers)
-    mean = np.mean(bers)
-    var = np.var(bers)
-
-    return mean, var
-
-def amplitude_envelope(data):
-    '''
-    computes amplitude envelope for different frames
-    :return: mean, var
-    '''
-
-    #compute for each frame
-    amp_envs = []
-    for i in range(0, len(data), 512):
-        frame = data[i:i + 2048] # get frame
-        amp_envs.append(max(frame)) #max amplitude in the current frame
-
-        amp_envs = np.array(amp_envs)
-        mean = np.mean(amp_envs)
-        var = np.var(amp_envs)
-
-        return mean, var
+compute_features()
