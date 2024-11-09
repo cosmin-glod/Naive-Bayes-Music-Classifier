@@ -1,3 +1,4 @@
+import os
 import librosa
 import numpy as np
 
@@ -6,7 +7,13 @@ import numpy as np
     The variance or standard deviation gives you information about how much the frequency varies over time.
 '''
 
-
+def getSongs():
+    filename = []
+    songsFolder = 'genres_original'
+    for genre in os.listdir(songsFolder):
+        for song in os.listdir(songsFolder + '/' + genre)
+            filename.append(songsFolder + '/' + genre + '/' + song)
+    return filename
 
 def chroma(data):
     computedChroma = librosa.feature.chroma_stft(data)
