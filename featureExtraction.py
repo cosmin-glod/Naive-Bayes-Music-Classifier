@@ -1,6 +1,6 @@
 import os
 
-import librosa
+import librosa, librosa.feature
 import numpy as np
 
 '''
@@ -16,7 +16,7 @@ def getSongs():
     return filename
 
 def chroma(data):
-    computedChroma = librosa.feature.chroma_stft(data)
+    computedChroma = librosa.feature.chroma_stft(y = data)
 
     '''
     Chroma computes the strength of each pitch
@@ -28,7 +28,7 @@ def chroma(data):
     return mean, var
 
 def rootMeanSquareEnergy(data):
-    rms = librosa.feature.rms(data)
+    rms = librosa.feature.rms(y = data)
 
     '''
     Root mean square of amplitude
@@ -41,7 +41,7 @@ def rootMeanSquareEnergy(data):
 
 def spectralCentroidAndBandwidth(data):
     # spectral centroid
-    centroid = librosa.feature.spectral_centroid(data)
+    centroid = librosa.feature.spectral_centroid(y = data)
 
     '''
     Average frequency of sound
@@ -50,8 +50,8 @@ def spectralCentroidAndBandwidth(data):
     centroidMean = np.mean(centroid)
     centroidVar = np.var(centroid)
 
-    # bendwidth
-    bandwidth = librosa.feature.spectral_bandwidth(data)
+    # bandwidth
+    bandwidth = librosa.feature.spectral_bandwidth(y = data)
 
     '''
     Range of frequencies where energy is distributed
@@ -65,7 +65,7 @@ def spectralCentroidAndBandwidth(data):
 
 def rolloff(data):
 
-    r_data = librosa.feature.spectral_rolloff(data)
+    r_data = librosa.feature.spectral_rolloff(y = data)
 
     '''
     Frequency below which 85% of energy is considered
@@ -111,7 +111,7 @@ def decompose_harmonic_percussive(data):
     return h_mean, h_var, p_mean, p_var
 
 def mel_frequency_cepstral_coef(data):
-    mfcc_data = librosa.feature.mfcc(data)
+    mfcc_data = librosa.feature.mfcc(y = data)
 
     mfcc_means = np.mean(mfcc_data, axis=1)
     mfcc_var = np.var(mfcc_data, axis=1)
