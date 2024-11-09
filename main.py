@@ -2,7 +2,8 @@ import librosa, librosa.display
 import numpy as np
 import matplotlib.pyplot as plt
 
-signal, sr = librosa.load(librosa.util.example('brahms'))
+
+signal, sr = librosa.load(librosa.util.example('mozart'))
 
 plt.figure(figsize=(20, 5))
 librosa.display.waveshow(signal, sr=sr)
