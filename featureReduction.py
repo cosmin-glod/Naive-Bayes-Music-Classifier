@@ -29,8 +29,6 @@ def PCA(variance = 0.8):
     T = largestVectors[:, :sigma]
     projection = np.dot(means, T)
 
-    print(len(T[0]))
-
     np.save("pca.npy", projection)
 
 PCA()
