@@ -11,6 +11,4 @@ for genre_folder in os.listdir(genres_dir):
         folder_names.append(genre_folder)
 
 folder_names_array = np.array(folder_names)
-# print(folder_names_array, len(folder_names_array))
-print(len(folder_names_array))
 np.save("labels.npy", folder_names_array)
