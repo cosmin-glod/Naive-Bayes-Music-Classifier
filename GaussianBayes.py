@@ -54,8 +54,12 @@ def gaussianNaiveBayes(trainData, trainLabels, testData):
     probReggae = multivariate_normal.pdf(testData, meanReggae, covReggae) * 1 / 10
     probRock = multivariate_normal.pdf(testData, meanRock, covRock) * 1 / 10
 
+    epsilon = 1e-100
+
     np.seterr(divide = 'ignore')
-    logProb = np.log(np.vstack((probBlues, probClassical, probCountry, probDisco, probHiphop, probJazz, probMetal, probPop, probReggae, probRock)))
+    prob = np.vstack((probBlues, probClassical, probCountry, probDisco, probHiphop, probJazz, probMetal, probPop, probReggae, probRock))
+    probClipped = np.where(prob == 0, epsilon, prob)
+    logProb = np.log(probClipped)
 
     return logProb
 

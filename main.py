@@ -2,12 +2,11 @@ import numpy as np
 import random
 from GaussianBayes import gaussianNaiveBayes as gnb
 
-
 def split_data():
     data = np.load("./pca.npy")
     data_labels = np.load("./labels.npy")
 
-    ratio = 80 # 80:20 ratio training:test data
+    ratio = 99 # 80:20 ratio training:test data
     dataset = np.zeros(data.shape[0], dtype=np.short)
 
     for i in range(1, 11):
@@ -29,5 +28,4 @@ def split_data():
 train_data, train_labels, test_data, true_labels, dataset = split_data()
 predictions = gnb(train_data, train_labels, test_data)
 # eva = evaluation(predictions, true_labels, name)
-predictions = np.argmax(predictions, axis = 0)
-print(predictions)
+# predictions = np.argmax(predictions, axis = 0)

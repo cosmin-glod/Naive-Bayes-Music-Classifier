@@ -9,7 +9,7 @@ def center(data):
     final = np.divide(centeredData, std)
     return final
 
-def PCA(variance = 0.8):
+def PCA(variance = 0.95):
     data = np.load("features.npy")
 
     means = center(data)
