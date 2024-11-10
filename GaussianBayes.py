@@ -43,16 +43,16 @@ def gaussianNaiveBayes(trainData, trainLabels, testData):
     meanRock = np.mean(rockTrain, axis = 0)
     covRock = np.cov(rockTrain, rowvar = False)
 
-    probBlues = multivariate_normal(testData, meanBlues, covBlues) * 1 / 10
-    probClassical = multivariate_normal(testData, meanClassical, covClassical) * 1 / 10
-    probCountry = multivariate_normal(testData, meanCountry, covCountry) * 1 / 10
-    probDisco = multivariate_normal(testData, meanDisco, covDisco) * 1 / 10
-    probHiphop = multivariate_normal(testData, meanHiphop, covHiphop) * 1 / 10
-    probJazz = multivariate_normal(testData, meanJazz, covJazz) * 1 / 10
-    probMetal = multivariate_normal(testData, meanMetal, covMetal) * 1 / 10
-    probPop = multivariate_normal(testData, meanPop, covPop) * 1 / 10
-    probReggae = multivariate_normal(testData, meanReggae, covReggae) * 1 / 10
-    probRock = multivariate_normal(testData, meanRock, covRock) * 1 / 10
+    probBlues = multivariate_normal.pdf(testData, meanBlues, covBlues) * 1 / 10
+    probClassical = multivariate_normal.pdf(testData, meanClassical, covClassical) * 1 / 10
+    probCountry = multivariate_normal.pdf(testData, meanCountry, covCountry) * 1 / 10
+    probDisco = multivariate_normal.pdf(testData, meanDisco, covDisco) * 1 / 10
+    probHiphop = multivariate_normal.pdf(testData, meanHiphop, covHiphop) * 1 / 10
+    probJazz = multivariate_normal.pdf(testData, meanJazz, covJazz) * 1 / 10
+    probMetal = multivariate_normal.pdf(testData, meanMetal, covMetal) * 1 / 10
+    probPop = multivariate_normal.pdf(testData, meanPop, covPop) * 1 / 10
+    probReggae = multivariate_normal.pdf(testData, meanReggae, covReggae) * 1 / 10
+    probRock = multivariate_normal.pdf(testData, meanRock, covRock) * 1 / 10
 
     np.seterr(divide = 'ignore')
     logProb = np.log(np.vstack((probBlues, probClassical, probCountry, probDisco, probHiphop, probJazz, probMetal, probPop, probReggae, probRock)))
