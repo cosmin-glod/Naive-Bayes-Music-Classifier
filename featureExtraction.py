@@ -174,6 +174,8 @@ def mel_frequency_cepstral_coef(data):
     return mfcc_means, mfcc_var
 
 def compute_features():
+    if os.path.exists("features.npy"):
+        return np.load("features.npy")
 
     songs = getSongs()
 
@@ -220,5 +222,49 @@ def compute_features():
         all_features.append(song_features)
 
     np.save("features.npy", np.array(all_features))
+
+def custom_compute_features(custom_song):
+
+    custom_song_features = np.empty(61)
+    custom_data, custom_sr = librosa.load(custom_song)
+
+
+    # Chroma features
+    custom_song_features[0], custom_song_features[1] = chroma(custom_data)
+
+    # Root Mean Square Energy
+    custom_song_features[2], custom_song_features[3] = rootMeanSquareEnergy(custom_data)
+
+    # Spectral Centroid and Bandwidth
+    custom_song_features[4:8] = spectralCentroidAndBandwidth(custom_data)
+
+    # Spectral Rolloff
+    custom_song_features[8], custom_song_features[9] = rolloff(custom_data)
+
+    # Zero Crossing Rate
+    custom_song_features[10], custom_song_features[11] = zero_crossing_rate(custom_data)
+
+    # Harmonic and Percussive Components
+    custom_song_features[12:16] = decompose_harmonic_percussive(custom_data)
+
+    # Tempo
+    custom_song_features[16] = tempo(custom_data)
+
+    # Band Energy Ratio
+    custom_song_features[17], custom_song_features[18] = band_energy_ratio(custom_data, custom_sr)
+
+    # Amplitude Envelope
+    custom_song_features[19], custom_song_features[20] = amplitude_envelope(custom_data)
+
+    # Mel-Frequency Cepstral Coefficients (MFCC) - Alternating between mean and variance
+    mfcc_means, mfcc_vars = mel_frequency_cepstral_coef(custom_data)
+    custom_song_features[21:61:2] = mfcc_means
+    custom_song_features[22:62:2] = mfcc_vars
+
+
+    existing_features = np.load("features.npy")
+    updated_features = np.append(existing_features, [custom_song_features], axis = 0)
+    np.save("features.npy", updated_features)
+
 
 compute_features()

@@ -1,6 +1,7 @@
-import numpy as np
-from scipy.cluster.hierarchy import optimal_leaf_ordering
+import os
 
+import numpy as np
+from sklearn.decomposition import PCA
 
 def center(data):
     means = np.mean(data, axis = 0)
@@ -10,12 +11,11 @@ def center(data):
     return final
 
 def PCA(variance = 0.95):
-    data = np.load("features.npy")
 
+    data = np.load("features.npy")
     means = center(data)
 
     cov = np.cov(means, rowvar = False)
-
     eigenvalues, eigenvectors = np.linalg.eig(cov)
 
     ordered = np.argsort(eigenvalues)[::-1]
@@ -30,5 +30,6 @@ def PCA(variance = 0.95):
     projection = np.dot(means, T)
 
     np.save("pca.npy", projection)
+
 
 PCA()
