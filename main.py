@@ -126,12 +126,15 @@ def custom_category():
     np.save("features.npy", copy_data)
 
 
-custom_category()
+choice = int(input("Press 1 to input a custom file that you want analysed. Else, to run on our dataset use 2."))
 
-print("Statistics based on 80:20 test distribution:")
-train_data, train_labels, test_data, true_labels, dataset = split_data(80)
-predictions = gnb(train_data, train_labels, test_data)
-computing_statistics(true_labels,predictions)
+if choice == 1:
+    custom_category()
+else:
+    print("Statistics based on 80:20 test distribution:\n")
+    train_data, train_labels, test_data, true_labels, dataset = split_data(80)
+    predictions = gnb(train_data, train_labels, test_data)
+    computing_statistics(true_labels, predictions)
 
 
 
